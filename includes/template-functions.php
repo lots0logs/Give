@@ -51,7 +51,7 @@ function give_get_templates_url() {
  * @uses  load_template()
  * @uses  get_template_part()
  */
-function give_get_template_part( $slug, $name = null, $load = true ) {
+function give_get_template_part( $slug, $name = null, $load = true, $vars = array() ) {
 
 	// Execute code for this part
 	do_action( 'get_template_part_' . $slug, $slug, $name );
@@ -67,7 +67,7 @@ function give_get_template_part( $slug, $name = null, $load = true ) {
 	$templates = apply_filters( 'give_get_template_part', $templates, $slug, $name );
 
 	// Return the part that is found
-	return give_locate_template( $templates, $load, false );
+	return give_locate_template( $templates, $load, false, $vars );
 }
 
 /**
@@ -88,7 +88,7 @@ function give_get_template_part( $slug, $name = null, $load = true ) {
  *
  * @return string The template filename if one is located.
  */
-function give_locate_template( $template_names, $load = false, $require_once = true ) {
+function give_locate_template( $template_names, $load = false, $require_once = true, $vars = array() ) {
 	// No file found yet
 	$located = false;
 
@@ -117,8 +117,14 @@ function give_locate_template( $template_names, $load = false, $require_once = t
 		}
 	}
 
-	if ( ( true == $load ) && ! empty( $located ) ) {
-		load_template( $located, $require_once );
+	if ( isset( $vars ) && is_array( $vars ) ) {
+		extract( $vars );
+	}
+
+	if ( true == $load && ! empty( $located ) ) {
+
+		include( $located );
+
 	}
 
 	return $located;
@@ -345,8 +351,8 @@ if ( ! function_exists( 'give_show_form_images' ) ) {
 	 * Output the product image before the single product summary.
 	 */
 	function give_show_form_images() {
-		$featured_image_option = give_get_option('disable_form_featured_img');
-		if($featured_image_option !== 'on'){
+		$featured_image_option = give_get_option( 'disable_form_featured_img' );
+		if ( $featured_image_option !== 'on' ) {
 			give_get_template_part( 'single-give-form/featured-image' );
 		}
 	}
