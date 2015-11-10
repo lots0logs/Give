@@ -48,8 +48,8 @@ class Give_Helper_Payment extends WP_UnitTestCase {
 		);
 
 		$total               = 0;
-		$simple_price        = get_post_meta( $simple_form->ID, 'give_price', true );
-		$variable_prices     = get_post_meta( $multilevel_form->ID, 'give_variable_prices', true );
+		$simple_price        = get_post_meta( $simple_form->ID, '_give_price', true );
+		$variable_prices     = get_post_meta( $multilevel_form->ID, '_give_donation_levels', true );
 		$variable_item_price = $variable_prices[1]['amount']; // == $100
 
 		$total += $variable_item_price + $simple_price;
@@ -58,6 +58,61 @@ class Give_Helper_Payment extends WP_UnitTestCase {
 			'price'           => number_format( (float) $total, 2 ),
 			'give_form_title' => 'Test Donation',
 			'give_form_id'    => $simple_form->ID,
+			'date'            => date( 'Y-m-d H:i:s', strtotime( '-1 day' ) ),
+			'purchase_key'    => strtolower( md5( uniqid() ) ),
+			'user_email'      => $user_info['email'],
+			'user_info'       => $user_info,
+			'currency'        => 'USD',
+			'status'          => 'pending'
+		);
+
+		$_SERVER['REMOTE_ADDR'] = '127.0.0.1';
+		$_SERVER['SERVER_NAME'] = 'give_virtual';
+
+		$payment_id = give_insert_payment( $purchase_data );
+		$key        = $purchase_data['purchase_key'];
+
+		$transaction_id = 'FIR3SID3';
+		give_set_payment_transaction_id( $payment_id, $transaction_id );
+		give_insert_payment_note( $payment_id, sprintf( __( 'PayPal Transaction ID: %s', 'give' ), $transaction_id ) );
+
+		return $payment_id;
+
+	}
+
+	/**
+	 * Create a multilevel donation payment.
+	 *
+	 * @since 1.3.2
+	 */
+	public static function create_multilevel_payment() {
+
+		global $give_options;
+
+		// Enable a few options
+		$give_options['enable_sequential'] = '1';
+		$give_options['sequential_prefix'] = 'GIVE-';
+		update_option( 'give_settings', $give_options );
+
+		$multilevel_form = Give_Helper_Form::create_multilevel_form();
+
+		/** Generate some donations */
+		$user      = get_userdata( 1 );
+		$user_info = array(
+			'id'         => $user->ID,
+			'email'      => $user->user_email,
+			'first_name' => $user->first_name,
+			'last_name'  => $user->last_name
+		);
+
+		$variable_prices     = get_post_meta( $multilevel_form->ID, '_give_donation_levels', true );
+		$variable_item_price = $variable_prices[1]['_give_amount']; // == $20.00
+
+
+		$purchase_data = array(
+			'price'           => number_format( (float) $variable_item_price, 2 ),
+			'give_form_title' => 'Test Donation',
+			'give_form_id'    => $multilevel_form->ID,
 			'date'            => date( 'Y-m-d H:i:s', strtotime( '-1 day' ) ),
 			'purchase_key'    => strtolower( md5( uniqid() ) ),
 			'user_email'      => $user_info['email'],
