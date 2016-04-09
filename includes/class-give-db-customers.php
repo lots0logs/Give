@@ -75,7 +75,7 @@ class Give_DB_Customers extends Give_DB {
 			'purchase_value'       => 0.00,
 			'purchase_count'       => 0,
 			'notes'                => '',
-			'frontend_donor_lists' => 1,
+			'frontend_donor_lists' => 0,
 			'date_created'         => date( 'Y-m-d H:i:s' ),
 		);
 	}
@@ -534,7 +534,7 @@ class Give_DB_Customers extends Give_DB {
 		purchase_count bigint(20) NOT NULL,
 		payment_ids longtext NOT NULL,
 		notes longtext NOT NULL,
-		frontend_donor_lists TINYINT unsigned NOT NULL DEFAULT 1,
+		frontend_donor_lists TINYINT unsigned NOT NULL DEFAULT 0,
 		date_created datetime NOT NULL,
 		PRIMARY KEY  (id),
 		UNIQUE KEY email (email),
