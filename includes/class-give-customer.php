@@ -85,6 +85,13 @@ class Give_Customer {
 	public $notes;
 
 	/**
+	 * Can include in frontend donor lists.
+	 *
+	 * @since  1.5
+	 */
+	public $frontend_donor_lists;
+
+	/**
 	 * The Database Abstraction
 	 *
 	 * @since  1.0

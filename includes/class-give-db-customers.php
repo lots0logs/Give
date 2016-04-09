@@ -47,15 +47,16 @@ class Give_DB_Customers extends Give_DB {
 	 */
 	public function get_columns() {
 		return array(
-			'id'             => '%d',
-			'user_id'        => '%d',
-			'name'           => '%s',
-			'email'          => '%s',
-			'payment_ids'    => '%s',
-			'purchase_value' => '%f',
-			'purchase_count' => '%d',
-			'notes'          => '%s',
-			'date_created'   => '%s',
+			'id'                   => '%d',
+			'user_id'              => '%d',
+			'name'                 => '%s',
+			'email'                => '%s',
+			'payment_ids'          => '%s',
+			'purchase_value'       => '%f',
+			'purchase_count'       => '%d',
+			'notes'                => '%s',
+			'frontend_donor_lists' => '%d',
+			'date_created'         => '%s',
 		);
 	}
 
@@ -67,14 +68,15 @@ class Give_DB_Customers extends Give_DB {
 	 */
 	public function get_column_defaults() {
 		return array(
-			'user_id'        => 0,
-			'email'          => '',
-			'name'           => '',
-			'payment_ids'    => '',
-			'purchase_value' => 0.00,
-			'purchase_count' => 0,
-			'notes'          => '',
-			'date_created'   => date( 'Y-m-d H:i:s' ),
+			'user_id'              => 0,
+			'email'                => '',
+			'name'                 => '',
+			'payment_ids'          => '',
+			'purchase_value'       => 0.00,
+			'purchase_count'       => 0,
+			'notes'                => '',
+			'frontend_donor_lists' => 1,
+			'date_created'         => date( 'Y-m-d H:i:s' ),
 		);
 	}
 
@@ -532,6 +534,7 @@ class Give_DB_Customers extends Give_DB {
 		purchase_count bigint(20) NOT NULL,
 		payment_ids longtext NOT NULL,
 		notes longtext NOT NULL,
+		frontend_donor_lists TINYINT unsigned NOT NULL DEFAULT 1,
 		date_created datetime NOT NULL,
 		PRIMARY KEY  (id),
 		UNIQUE KEY email (email),
