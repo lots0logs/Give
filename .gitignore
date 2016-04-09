@@ -1,6 +1,7 @@
 # IDE
 .idea
 .svn
+*.iml
 
 # Gulp / Grunt
 .sass-cache/*
